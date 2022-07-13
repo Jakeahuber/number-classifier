@@ -1,41 +1,70 @@
 import torch, torchvision
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.optim as optim
 import numpy as np
 from mnist import MNIST
 from neural_net import Neural_Net
+from torchvision import datasets
+from torchvision.transforms import ToTensor
     
+num_epochs = 2
+learning_rate = 0.01
+momentum = 0.9
+batch_size = 1 
 
-# Reads training set
-mndata = MNIST('training-set')
+# Create datasets for training & validation
+# There are 60,000 images in the training set. Each one is 28x28, or 784 pixels.
+training_set = datasets.MNIST(
+    root='training-set/',
+    train=True,
+    download=True,
+    transform=ToTensor()
+)
 
-'''
-Each image has size 28x28 pixels (Area = 784). Images is a list of lists. Labels is a list of integer values 0-9. 
-EX: images[0] contains 784 pixels/values.
-EX: Labels[0] is the correct value of images[0].
-'''
-images, labels = mndata.load_training()
+# Why do i shuffle the training loader?
+training_loader = torch.utils.data.DataLoader(training_set, batch_size=batch_size, shuffle=True)
 
-# Create tensors (similiar to numpy arrays)
-X = torch.tensor(images) # Shape: [60,000, 784]
-Y = torch.tensor(labels) # Shape: [60,000]
+# There are 10,000 items in the test set.
+testing_set = datasets.MNIST(
+    root='training-set/',
+    train=False,
+    download=True,
+    transform=ToTensor() 
+)
 
-# Move tensors to the GPU if available
-if torch.cuda.is_available():
-    X = X.to('cuda')
-    Y = Y.to('cuda')
-    print(f"X tensor is stored on: {X.device}")
-    print(f"Y tensor is stored on: {Y.device}")
+testing_loader = torch.utils.data.DataLoader(testing_set, batch_size=batch_size, shuffle=False)
 
-model = torchvision.models.resnet(pretrained=True)
-predictions = model(X) # Forward pass. Computes estimated Y values
-loss = (predictions - labels).sum() # Computes loss
-loss.backward() # Backward Pass. Computes derivatives for gradient descent. 
+# Class labels
+classes = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
-# Load in optimizer with a learning rate of 0.01 and momentum of 0.9.
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+neural_net = Neural_Net() # Initialize neural network
 
-optimizer.step() # Performs gradient descent
+criterion = nn.CrossEntropyLoss() # Initialize loss function. This uses a cross entropy loss
+optimizer = optim.SGD(neural_net.parameters(), lr=learning_rate, momentum=momentum) # Initialize optimizer
+
+for epoch in range(num_epochs): # loop over training set num_epoch times
+    running_loss = 0.0
+    for i, data in enumerate(training_loader, 0): # Problem here...
+        inputs, labels = data
+        optimizer.zero_grad()
+        outputs = neural_net(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        # print statistics
+        running_loss += loss.item()
+        if i % 2000 == 1999:    # print every 2000 mini-batches
+            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+            running_loss = 0.0
+
+print('Finished Training')
+
+
+
+
+
+
 
 
 
