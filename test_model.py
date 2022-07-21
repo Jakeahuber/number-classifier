@@ -23,7 +23,6 @@ total = 0
 with torch.no_grad():
     for data in testing_loader:
         images, labels = data
-        print(type(images))
         images = images.view(-1, 28*28).requires_grad_()
         # calculate outputs by running images through the network
         outputs = neural_net(images)

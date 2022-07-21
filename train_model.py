@@ -5,10 +5,10 @@ from neural_net import Neural_Net
 from torchvision import datasets
 from torchvision.transforms import ToTensor
     
-num_epochs = 10
-learning_rate = 0.001
+num_epochs = 200
+learning_rate = 1
 momentum = 0.9
-batch_size = 1
+batch_size = 256
 
 # Create datasets for training & validation
 # There are 60,000 images in the training set. Each one is 28x28, or 784 pixels.
@@ -36,13 +36,14 @@ testing_loader = torch.utils.data.DataLoader(testing_set, batch_size=batch_size,
 classes = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 neural_net = Neural_Net() # Initialize neural network
+#neural_net.load_state_dict(torch.load('model.pth'))
 
 criterion = nn.CrossEntropyLoss() # Initialize loss function. This uses a cross entropy loss
 optimizer = optim.SGD(neural_net.parameters(), lr=learning_rate, momentum=momentum) # Initialize optimizer
 
 for epoch in range(num_epochs): # loop over training set num_epoch times
     running_loss = 0.0
-    for i, data in enumerate(training_loader, 0): # Problem here...
+    for i, data in enumerate(training_loader, 0): 
         inputs, labels = data
         inputs = inputs.view(-1, 28*28).requires_grad_()
 
@@ -52,11 +53,9 @@ for epoch in range(num_epochs): # loop over training set num_epoch times
         loss.backward()
         optimizer.step()
 
-        # print statistics
         running_loss += loss.item()
-        if i % 1000 == 999:    # print every 2000 mini-batches
-            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-            running_loss = 0.0
+    # print statistics    
+    print(f'epoch: {epoch + 1}, loss: {running_loss / (60000 / batch_size):.3f}')
 
 PATH = './model.pth'
 torch.save(neural_net.state_dict(), PATH)
