@@ -1,21 +1,16 @@
 import PIL.Image
-from PIL import ImageEnhance
 from neural_net import Net
 import torch
-from torchvision import transforms
 import cv2
-import tkinter as tk
 import numpy as np
 import torch.nn.functional as nnf
-import torch.nn as nn
 from tkinter import * 
-import math
 import imutils
 from numpy import newaxis
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import matplotlib.pyplot as plt
-
-torch.set_printoptions(precision=10)
 
 x = 0
 y = 0
@@ -38,13 +33,16 @@ def create_drawing_canvas():
     drawing_canvas.bind("<Button-1>", get_coords)
     drawing_canvas.bind("<B1-Motion>", draw_number)
     drawing_canvas.create_rectangle(0, 0, 400, 400, fill='black')
-    outer_canvas.create_window(250, 250, window=drawing_canvas)
+    outer_canvas.create_window(250, 258, window=drawing_canvas)
 
 def save_drawing_canvas():
-    drawing_canvas.postscript(file='drawn_image.ps')
-    ps_image = PIL.Image.open('drawn_image.ps')
-    ps_image.save('drawn_image.png')
-    center_image()
+    try:
+        drawing_canvas.postscript(file='drawn_image.ps')
+        ps_image = PIL.Image.open('drawn_image.ps')
+        ps_image.save('drawn_image.png')
+        center_image()
+    except:
+        result_label.config(text="   Draw a number") # Spacing is added to make the text appear centered
 
 def center_image():
     image = cv2.imread('drawn_image.png', cv2.IMREAD_GRAYSCALE)
@@ -80,36 +78,66 @@ def guess_number():
     image = torch.tensor(image).float()
 
     output = neural_net(image)
-    print(output)
-
     probability = nnf.softmax(output, dim = 1)
-    print(probability)
 
-    top_probabilities, top_labels = torch.topk(probability, 10)
-    print(top_probabilities)
-    print(top_labels)
+    probability = probability.detach().numpy()
+    probability = probability[0].tolist()
+    x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    plot_chart(x, probability)
     
     _, predicted = torch.max(output.data, 1) # the class with the highest energy is what we choose as prediction
     result_label.config(text=f'This number is a {predicted.numpy()[0]}')
 
+def plot_chart(x, y):
+    fig.clear()
+    plot = fig.add_subplot(111)
+    plot.bar(x, y)
+    plot.set_xticks(np.arange(0, 10, step=1.0))
+    plot.set_yticks(np.arange(0, 1, step=0.1))
+    plot.set_xlabel('Number')
+    plot.set_ylabel('Probability')
+    plot.set_facecolor('#F0F0F0')
+    plotting_canvas.draw_idle()
+
 root = Tk()
-outer_canvas = Canvas(root, width=500, height=500)
+outer_canvas = Canvas(root, width=400, height=525)
 outer_canvas.pack()
 
 drawing_canvas = Canvas(outer_canvas, width=300, height=300)
+drawing_canvas.place(x=100, y=200)
 create_drawing_canvas()
 
 # Add buttons and text to the outer canvas
-btn = Button(root, text='Guess Number', command=guess_number)
-btn.place(x=200, y=425)
+btn1 = Button(outer_canvas, text='Guess Number', command=guess_number)
+btn1.configure(font = ("Arial", 12), padx=3, pady=3)
+btn1.place(x=120, y=425)
 
-btn = Button(root, text='Clear Drawing', command=clear_drawing_canvas)
-btn.place(x=200, y=450)
+btn2 = Button(outer_canvas, text='Clear Drawing', command=clear_drawing_canvas)
+btn2.configure(font = ("Arial", 12), padx=3, pady=3)
+btn2.place(x=260, y=425)
 
-label = Label(text="Number classifier")
-label.place(x=200,y=50)  
+label = Label(root, text="Number classifier")
+label.configure(font = ("Arial", 20))
+label.place(x=345,y=33)  
 
-result_label = Label(text="")
-result_label.place(x=200, y=75)
+result_label = Label(outer_canvas, text="", font = ("Arial", 13))
+result_label.place(x=181, y=75)
+
+
+fig = Figure(figsize=(4, 4), dpi=95)
+fig.patch.set_facecolor('#F0F0F0')
+plot = fig.add_subplot(111)
+plot.bar([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+plot.set_xticks(np.arange(0, 10, step=1.0))
+plot.set_yticks(np.arange(0, 1, step=0.1))
+plot.set_xlabel('Number')
+plot.set_ylabel('Probability')
+plot.set_facecolor('#F0F0F0')
+
+plotting_canvas = FigureCanvasTkAgg(fig, master=root)
+plotting_canvas.draw()
+
+plotting_canvas.get_tk_widget().pack(side='left', padx=50, pady=(0, 20))
+outer_canvas.pack(side='left')
 
 root.mainloop()
