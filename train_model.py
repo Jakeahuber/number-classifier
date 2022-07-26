@@ -7,8 +7,8 @@ from torchvision.transforms import ToTensor
 import numpy as np    
 import matplotlib.pyplot as plt
 
-num_epochs = 4
-learning_rate = 0.0001
+num_epochs = 7
+learning_rate = 0.000005
 momentum = 0.9
 batch_size = 1
 
@@ -24,8 +24,6 @@ criterion = nn.CrossEntropyLoss() # Initialize loss function. This uses a cross 
 optimizer = optim.SGD(neural_net.parameters(), lr=learning_rate, momentum=momentum) # Initialize optimizer
 
 for epoch in range(num_epochs): # loop over training set num_epoch times
-    running_loss = 0.0
-
     loss_vector = []
     correct = 0
     total = 0
