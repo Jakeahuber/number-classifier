@@ -3,23 +3,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 import h5py
 import numpy as np
-import matplotlib.pyplot as plt
 import torch.nn.functional as F
-
-# Define the neural network. Uses logistic regression model
-class Neural_Net(nn.Module):
-    # Constructor
-    def __init__(self):
-        # Allows access to methods within nn.Module
-        super(Neural_Net, self).__init__()      
-
-        # first parameter = input size. second parameter = output size
-        self.linear = nn.Linear(300*300, 10, bias=True)
-
-    def forward(self, x):
-        x = torch.sigmoid(self.linear(x))
-        x = torch.flatten(x, 1) # flatten all dimensions except the batch dimension
-        return x\
 
 class Net(nn.Module):
 
@@ -30,7 +14,7 @@ class Net(nn.Module):
         self.conv1 = nn.Conv2d(1, 6, 5)
         self.conv2 = nn.Conv2d(6, 1, 5)
         # an affine operation: y = Wx + b
-        self.fc1 = nn.Linear(72 * 72, 120)  # 5*5 from image dimension
+        self.fc1 = nn.Linear(72 * 72, 120) 
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)
 
@@ -62,5 +46,4 @@ class HDF5DataSet(Dataset):
         image = np.array(group['image'])
         label = np.array(group['label'])
 
-        #return torch.tensor(image).float().reshape(-1, 300 * 300), label[0]
         return torch.tensor(image).float(), label[0]

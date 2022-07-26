@@ -12,7 +12,7 @@ learning_rate = 0.000005
 momentum = 0.9
 batch_size = 1
 
-training_set = HDF5DataSet('dataset.hdf5')
+training_set = HDF5DataSet('data-set/trainset.hdf5')
 training_loader = torch.utils.data.DataLoader(training_set, batch_size=batch_size, shuffle=True)
 
 # Class labels

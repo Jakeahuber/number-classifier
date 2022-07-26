@@ -72,7 +72,7 @@ def save():
     save_drawing_canvas() # Saves canvas to drawn_image.png
     
     image = cv2.imread('drawn_image.png', cv2.IMREAD_GRAYSCALE)
-    with h5py.File('testset.hdf5', 'a') as f:
+    with h5py.File('trainset.hdf5', 'a') as f:
         print(len(f.keys()))
         g = f.create_group(str(len(f.keys())))
         g.create_dataset('image', data = image)

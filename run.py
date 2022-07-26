@@ -86,7 +86,7 @@ def guess_number():
     plot_chart(x, probability)
     
     _, predicted = torch.max(output.data, 1) # the class with the highest energy is what we choose as prediction
-    result_label.config(text=f'This number is a {predicted.numpy()[0]}')
+    result_label.config(text=f'This number is {predicted.numpy()[0]}')
 
 def plot_chart(x, y):
     fig.clear()
@@ -100,6 +100,8 @@ def plot_chart(x, y):
     plotting_canvas.draw_idle()
 
 root = Tk()
+root.title("Number Classifier")
+root.iconbitmap('favicon.ico')
 outer_canvas = Canvas(root, width=400, height=525)
 outer_canvas.pack()
 

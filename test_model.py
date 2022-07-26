@@ -5,7 +5,7 @@ batch_size = 1
 neural_net = Net()
 neural_net.load_state_dict(torch.load('model.pth'))
 
-testing_set = HDF5DataSet('testset.hdf5')
+testing_set = HDF5DataSet('datas-set/testset.hdf5')
 testing_loader = torch.utils.data.DataLoader(testing_set, batch_size=batch_size, shuffle=False)
 
 correct = 0
