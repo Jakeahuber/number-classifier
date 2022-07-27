@@ -5,7 +5,7 @@ batch_size = 1
 neural_net = Net()
 neural_net.load_state_dict(torch.load('model.pth'))
 
-testing_set = HDF5DataSet('datas-set/testset.hdf5')
+testing_set = HDF5DataSet('data-set/testset.hdf5')
 testing_loader = torch.utils.data.DataLoader(testing_set, batch_size=batch_size, shuffle=False)
 
 correct = 0
@@ -22,4 +22,4 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-print(f'Accuracy of the network on the 100 test images: {100 * correct // total} %')
+print(f'Accuracy of the network on the 200 test images: {100 * correct // total} %')

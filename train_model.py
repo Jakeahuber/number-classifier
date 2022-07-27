@@ -1,13 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from neural_net import Neural_Net, HDF5DataSet, Net
-from torchvision import datasets
-from torchvision.transforms import ToTensor
+from neural_net import HDF5DataSet, Net
 import numpy as np    
 import matplotlib.pyplot as plt
 
-num_epochs = 7
+num_epochs = 6
 learning_rate = 0.000005
 momentum = 0.9
 batch_size = 1
