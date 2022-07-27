@@ -8,7 +8,7 @@ PyTorch program for classifying handwritten digits 0-9.
 
 - My goal for this project was to get comfortable with the PyTorch framework, which I used to build, train, and test the machine learning model. I am using this framework for my undergraduate research, but I never used PyTorch before starting this project
 
-- I collected the data for this project’s training and testing set by executing add_data_training_set.py. This file displays a GUI that allows a user to draw a number and add its corresponding label. After the user finishes drawing, the program saves the image and label to either dataset.hdf5 (the training set), or testingset.hdf5. This project is still in the process of collecting data. 
+- I collected the data for this project’s training and testing set by executing add_data_training_set.py. This file displays a GUI that allows a user to draw a number and add its corresponding label. After the user finishes drawing, the program saves the image and label to either trainset.hdf5 or testset.hdf5. The training and testing sets contain 800 and 200 images, respectively. 
 
 - The project saves the images as 300x300 pixel grayscale images. I computed a bounding box for the unedited drawn digit from the user and created a new cropped image containing only the contents of the bounding box. I then rescaled this new image to fit within a 200x200 pixel box and generated the final output by pasting this rescaled image into the center of a 300x300 pixel all-black image.    
 
