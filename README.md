@@ -1,5 +1,5 @@
 # Number Classifier
-PyTorch program for classifying handwritten digits 0-9. 
+PyTorch program for classifying handwritten digits 0-9 with 97% accuracy. 
 
 ![demonstration_2](https://user-images.githubusercontent.com/68114979/181300210-d369c862-94fc-49ba-b679-11d1b570770c.gif)
 
