@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from neural_net import HDF5DataSet, Net
+from test_model import test_model
 import numpy as np    
-import matplotlib.pyplot as plt
 
-num_epochs = 6
+num_epochs = 13
 learning_rate = 0.000005
 momentum = 0.9
 batch_size = 1
@@ -13,13 +13,10 @@ batch_size = 1
 training_set = HDF5DataSet('data-set/trainset.hdf5')
 training_loader = torch.utils.data.DataLoader(training_set, batch_size=batch_size, shuffle=True)
 
-# Class labels
-classes = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-
 neural_net = Net()
 
 criterion = nn.CrossEntropyLoss() # Initialize loss function. This uses a cross entropy loss
-optimizer = optim.SGD(neural_net.parameters(), lr=learning_rate, momentum=momentum) # Initialize optimizer
+optimizer = optim.Adam(neural_net.parameters(), lr=learning_rate, weight_decay=0.0009) # Initialize optimizer. Weight decay adds L2 regularization to decrease overfitting
 
 for epoch in range(num_epochs): # loop over training set num_epoch times
     loss_vector = []
@@ -43,10 +40,12 @@ for epoch in range(num_epochs): # loop over training set num_epoch times
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-    print(f'epoch: {epoch + 1}, loss: {np.mean(loss_vector)}, accuracy: {100 * correct // total} %')
+    print(f'Epoch: {epoch + 1}, loss: {np.mean(loss_vector)}, accuracy: {100 * correct // total} %')
 
-PATH = './model.pth'
-torch.save(neural_net.state_dict(), PATH)
+    PATH = './model.pth'
+    torch.save(neural_net.state_dict(), PATH)
+    test_model()
+
 print('Finished Training')
 
 
