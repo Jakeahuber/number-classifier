@@ -7,7 +7,6 @@ import numpy as np
 
 num_epochs = 13
 learning_rate = 0.000005
-momentum = 0.9
 batch_size = 1
 
 training_set = HDF5DataSet('data-set/trainset.hdf5')
@@ -42,9 +41,9 @@ for epoch in range(num_epochs): # loop over training set num_epoch times
 
     print(f'Epoch: {epoch + 1}, loss: {np.mean(loss_vector)}, accuracy: {100 * correct // total} %')
 
-    PATH = './model.pth'
-    torch.save(neural_net.state_dict(), PATH)
-    test_model()
+PATH = './model.pth'
+torch.save(neural_net.state_dict(), PATH)
+test_model()
 
 print('Finished Training')
 

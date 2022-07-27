@@ -1,7 +1,6 @@
 import torch
 from neural_net import Net, HDF5DataSet
 
-
 def test_model():
     batch_size = 1
     neural_net = Net()
